@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Sandbox {
+  id        String      @id
+  name      String
+  status    String      @default("active")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  telemetry Telemetry[]
+  events    FileEvent[]
+  alerts    Alert[]
+
+  @@index([status])
+}
+
+model Telemetry {
+  id           String   @id @default(uuid())
+  sandboxId    String
+  cpuUsage     Float
+  memoryUsage  Float
+  diskUsage    Float
+  status       String
+  timestamp    DateTime @default(now())
+  sandbox      Sandbox  @relation(fields: [sandboxId], references: [id], onDelete: Cascade)
+
+  @@index([sandboxId, timestamp(sort: Desc)])
+}
+
+model FileEvent {
+  id        String   @id @default(uuid())
+  sandboxId String
+  type      String   // "created", "modified", "deleted"
+  path      String
+  timestamp DateTime @default(now())
+  sandbox   Sandbox  @relation(fields: [sandboxId], references: [id], onDelete: Cascade)
+
+  @@index([sandboxId, timestamp(sort: Desc)])
+}
+
+model Alert {
+  id        String   @id @default(uuid())
+  sandboxId String
+  severity  String   // "WARNING", "CRITICAL"
+  message   String
+  dismissed Boolean  @default(false)
+  timestamp DateTime @default(now())
+  sandbox   Sandbox  @relation(fields: [sandboxId], references: [id], onDelete: Cascade)
+
+  @@index([sandboxId, dismissed, timestamp(sort: Desc)])
+}
