@@ -35,3 +35,18 @@ The fastest way to run the application is via Docker Compose.
 ```bash
 git clone [https://github.com/yourusername/sandbox-uptime-monitor.git](https://github.com/yourusername/sandbox-uptime-monitor.git)
 cd sandbox-uptime-monitor
+2. Configure your environment
+Create a .env file in the root directory and add your E2B API Key:
+
+Code snippet
+E2B_API_KEY="e2b_your_api_key_here"
+
+3. Build and launch the containers
+
+Bash
+docker-compose up --build -d
+
+4. Access the Dashboard
+Open your browser and navigate to http://localhost:3000.
+
+Built with modern architecture for scale, speed, and reliability.
